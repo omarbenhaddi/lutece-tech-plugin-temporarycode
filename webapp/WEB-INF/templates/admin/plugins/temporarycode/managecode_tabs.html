@@ -1,0 +1,10 @@
+<#macro tabs2 tab >
+<@tabs>
+	<@tabList>
+			<li <#if tab="temporarycodeconfig">class="active"</#if>>
+				<@aButton href="jsp/admin/plugins/temporarycode/ManageTemporaryCodeConfigs.jsp">#i18n{temporarycode.manage_temporarycodeconfigs.pageTitle}</@aButton>
+			</li>
+	</@tabList>
+</@tabs>
+
+</#macro>
