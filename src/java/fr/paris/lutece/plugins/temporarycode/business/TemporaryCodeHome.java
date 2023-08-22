@@ -107,14 +107,26 @@ public final class TemporaryCodeHome
      * Returns an instance of a temporaryCode by user id and code
      * @param strUserId the user id
      * @param strCode the code
+     * @param strActionName the action name
      * @return an instance of TemporaryCode
      */
-    public static Optional<TemporaryCode> findByUserIdAndCode( String strUserId, String strCode )
+    public static Optional<TemporaryCode> findByUserIdAndCode( String strUserId, String strCode, String strActionName )
     {
-        return _dao.loadByUserIdAndCode( strUserId, strCode, _plugin );
+        return _dao.loadByUserIdAndCode( strUserId, strCode, strActionName, _plugin );
+    }
+    
+    /**
+     * Returns an instance of a temporaryCode by user id and action name
+     * @param strUserId the user id
+     * @param strActionName the action name
+     * @return an instance of TemporaryCode
+     */
+    public static Optional<TemporaryCode> findByUserIdAndActionName( String strUserId, String strActionName )
+    {
+        return _dao.loadByUserAndActionName( strUserId, strActionName, _plugin );
     }
 
-
+    
     /**
      * Load the data of all the temporaryCode objects and returns them as a list
      * @return the list which contains the data of all the temporaryCode objects

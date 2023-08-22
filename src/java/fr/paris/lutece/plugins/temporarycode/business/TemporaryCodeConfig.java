@@ -51,6 +51,8 @@ public class TemporaryCodeConfig implements Serializable
     
     @NotEmpty( message = "#i18n{temporarycode.validation.temporarycodeconfig.Character.notEmpty}" )
     private String _strCharacterType;
+    
+    private boolean _bDefault;
 
     /**
      * Returns the Id
@@ -124,6 +126,22 @@ public class TemporaryCodeConfig implements Serializable
     public void setCharacterType( String character )
     {
         _strCharacterType = character;
+    }
+
+    /**
+     * @return the _bDefault
+     */
+    public boolean isDefault( )
+    {
+        return _bDefault;
+    }
+
+    /**
+     * @param bDefault the _bDefault to set
+     */
+    public void setDefault( boolean bDefault )
+    {
+        this._bDefault = bDefault;
     }
     
 }

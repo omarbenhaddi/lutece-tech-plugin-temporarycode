@@ -50,13 +50,15 @@ import java.util.Optional;
 public final class TemporaryCodeConfigDAO implements ITemporaryCodeConfigDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_temporary_code_config, code_length, validity_time, character_type FROM temporary_code_config WHERE id_temporary_code_config = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO temporary_code_config ( code_length, validity_time, character_type ) VALUES ( ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_temporary_code_config, code_length, validity_time, character_type, default_temporary_code FROM temporary_code_config WHERE id_temporary_code_config = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO temporary_code_config ( code_length, validity_time, character_type, default_temporary_code ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM temporary_code_config WHERE id_temporary_code_config = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE temporary_code_config SET code_length = ?, validity_time = ?, character_type = ? WHERE id_temporary_code_config = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_temporary_code_config, code_length, validity_time, character_type FROM temporary_code_config";
+    private static final String SQL_QUERY_UPDATE = "UPDATE temporary_code_config SET code_length = ?, validity_time = ?, character_type = ?, default_temporary_code = ? WHERE id_temporary_code_config = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_temporary_code_config, code_length, validity_time, character_type, default_temporary_code FROM temporary_code_config";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_temporary_code_config FROM temporary_code_config";
-    private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT id_temporary_code_config, code_length, validity_time, character_type FROM temporary_code_config WHERE id_temporary_code_config IN (  ";
+    private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT id_temporary_code_config, code_length, validity_time, character_type, default_temporary_code FROM temporary_code_config WHERE id_temporary_code_config IN (  ";
+    private static final String SQL_QUERY_SELECT_DEFAULT = "SELECT id_temporary_code_config, code_length, validity_time, character_type, default_temporary_code FROM temporary_code_config WHERE default_temporary_code = 1";    
+    private static final String SQL_QUERY_CLEAR_DEFAULT_FLAG = "UPDATE temporary_code_config SET default_temporary_code=0";
 
     /**
      * {@inheritDoc }
@@ -70,6 +72,7 @@ public final class TemporaryCodeConfigDAO implements ITemporaryCodeConfigDAO
             daoUtil.setInt( nIndex++ , temporaryCodeConfig.getCodeLength( ) );
             daoUtil.setInt( nIndex++ , temporaryCodeConfig.getValidityTime( ) );
             daoUtil.setString( nIndex++ , temporaryCodeConfig.getCharacterType( ) );
+            daoUtil.setBoolean( nIndex++, temporaryCodeConfig.isDefault( ) );
             
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) ) 
@@ -100,7 +103,8 @@ public final class TemporaryCodeConfigDAO implements ITemporaryCodeConfigDAO
 	            temporaryCodeConfig.setId( daoUtil.getInt( nIndex++ ) );
 			    temporaryCodeConfig.setCodeLength( daoUtil.getInt( nIndex++ ) );
 			    temporaryCodeConfig.setValidityTime( daoUtil.getInt( nIndex++ ) );
-			    temporaryCodeConfig.setCharacterType( daoUtil.getString( nIndex ) );
+			    temporaryCodeConfig.setCharacterType( daoUtil.getString( nIndex++ ) );
+			    temporaryCodeConfig.setDefault( daoUtil.getBoolean( nIndex++ ) );
 	        }
 	
 	        return Optional.ofNullable( temporaryCodeConfig );
@@ -133,6 +137,7 @@ public final class TemporaryCodeConfigDAO implements ITemporaryCodeConfigDAO
         	daoUtil.setInt( nIndex++ , temporaryCodeConfig.getCodeLength( ) );
         	daoUtil.setInt( nIndex++ , temporaryCodeConfig.getValidityTime( ) );
         	daoUtil.setString( nIndex++ , temporaryCodeConfig.getCharacterType( ) );
+        	daoUtil.setBoolean( nIndex++, temporaryCodeConfig.isDefault( ) );
 	        daoUtil.setInt( nIndex , temporaryCodeConfig.getId( ) );
 	
 	        daoUtil.executeUpdate( );
@@ -158,7 +163,8 @@ public final class TemporaryCodeConfigDAO implements ITemporaryCodeConfigDAO
 	            temporaryCodeConfig.setId( daoUtil.getInt( nIndex++ ) );
 			    temporaryCodeConfig.setCodeLength( daoUtil.getInt( nIndex++ ) );
 			    temporaryCodeConfig.setValidityTime( daoUtil.getInt( nIndex++ ) );
-			    temporaryCodeConfig.setCharacterType( daoUtil.getString( nIndex ) );
+			    temporaryCodeConfig.setCharacterType( daoUtil.getString( nIndex++ ) );
+			    temporaryCodeConfig.setDefault( daoUtil.getBoolean( nIndex ) );
 			    
 	            temporaryCodeConfigList.add( temporaryCodeConfig );
 	        }
@@ -242,16 +248,48 @@ public final class TemporaryCodeConfigDAO implements ITemporaryCodeConfigDAO
 		            temporaryCodeConfig.setId( daoUtil.getInt( nIndex++ ) );
 				    temporaryCodeConfig.setCodeLength( daoUtil.getInt( nIndex++ ) );
 				    temporaryCodeConfig.setValidityTime( daoUtil.getInt( nIndex++ ) );
-				    temporaryCodeConfig.setCharacterType( daoUtil.getString( nIndex ) );
+				    temporaryCodeConfig.setCharacterType( daoUtil.getString( nIndex++ ) );
+				    temporaryCodeConfig.setDefault( daoUtil.getBoolean( nIndex ) );
 				    
 		            temporaryCodeConfigList.add( temporaryCodeConfig );
 		        }
-		
-		        daoUtil.free( );
-		        
+				        
 	        }
 	    }
 		return temporaryCodeConfigList;
 		
 	}
+
+    @Override
+    public void clearDefaultFlag( Plugin plugin )
+    {
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CLEAR_DEFAULT_FLAG, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    @Override
+    public Optional<TemporaryCodeConfig> loadDefaultConfig( Plugin plugin )
+    {
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_DEFAULT, plugin ) )
+        {
+            daoUtil.executeQuery( );
+            TemporaryCodeConfig temporaryCodeConfig = null;
+    
+            if ( daoUtil.next( ) )
+            {
+                temporaryCodeConfig = new TemporaryCodeConfig();
+                int nIndex = 1;
+                
+                temporaryCodeConfig.setId( daoUtil.getInt( nIndex++ ) );
+                temporaryCodeConfig.setCodeLength( daoUtil.getInt( nIndex++ ) );
+                temporaryCodeConfig.setValidityTime( daoUtil.getInt( nIndex++ ) );
+                temporaryCodeConfig.setCharacterType( daoUtil.getString( nIndex++ ) );
+                temporaryCodeConfig.setDefault( daoUtil.getBoolean( nIndex++ ) );
+            }
+    
+            return Optional.ofNullable( temporaryCodeConfig );
+        }
+    }
 }

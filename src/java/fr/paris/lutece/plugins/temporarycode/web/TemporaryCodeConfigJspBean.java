@@ -54,6 +54,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.temporarycode.business.EnumCharacterType;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfig;
@@ -87,6 +88,7 @@ public class TemporaryCodeConfigJspBean extends AbstractManageCodeJspBean <Integ
 
     // Properties
     private static final String MESSAGE_CONFIRM_REMOVE_TEMPORARYCODECONFIG = "temporarycode.message.confirmRemoveTemporaryCodeConfig";
+    private static final String MESSAGE_ERROR_REMOVE_TEMPORARYCODECONFIG = "temporarycode.message.errorRemoveTemporaryCodeConfig";
 
     // Validations
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "temporarycode.model.entity.temporarycodeconfig.attribute.";
@@ -201,6 +203,11 @@ public class TemporaryCodeConfigJspBean extends AbstractManageCodeJspBean <Integ
             return redirectView( request, VIEW_CREATE_TEMPORARYCODECONFIG );
         }
 
+        if( _temporarycodeconfig.isDefault( ) )
+        {
+            TemporaryCodeConfigHome.clearDefaultFlag( );
+        }
+        
         TemporaryCodeConfigHome.create( _temporarycodeconfig );
         addInfo( INFO_TEMPORARYCODECONFIG_CREATED, getLocale(  ) );
         resetListId( );
@@ -219,11 +226,22 @@ public class TemporaryCodeConfigJspBean extends AbstractManageCodeJspBean <Integ
     public String getConfirmRemoveTemporaryCodeConfig( HttpServletRequest request )
     {
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPORARYCODECONFIG ) );
-        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_TEMPORARYCODECONFIG ) );
-        url.addParameter( PARAMETER_ID_TEMPORARYCODECONFIG, nId );
+        
+        Optional<TemporaryCodeConfig> config = TemporaryCodeConfigHome.findByPrimaryKey( nId );
+        String strMessageUrl;
+        
+        if( config.isPresent( ) && !config.get( ).isDefault( ) )
+        {
+            UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_TEMPORARYCODECONFIG ) );
+            url.addParameter( PARAMETER_ID_TEMPORARYCODECONFIG, nId );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_TEMPORARYCODECONFIG, url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
-
+            strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_TEMPORARYCODECONFIG, url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+        }
+        else
+        {
+            strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_REMOVE_TEMPORARYCODECONFIG, AdminMessage.TYPE_ERROR );
+        }
+        
         return redirect( request, strMessageUrl );
     }
 
@@ -294,6 +312,11 @@ public class TemporaryCodeConfigJspBean extends AbstractManageCodeJspBean <Integ
         if ( !validateBean( _temporarycodeconfig, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
             return redirect( request, VIEW_MODIFY_TEMPORARYCODECONFIG, PARAMETER_ID_TEMPORARYCODECONFIG, _temporarycodeconfig.getId( ) );
+        }
+        
+        if( _temporarycodeconfig.isDefault( ) )
+        {
+            TemporaryCodeConfigHome.clearDefaultFlag( );
         }
 
         TemporaryCodeConfigHome.update( _temporarycodeconfig );

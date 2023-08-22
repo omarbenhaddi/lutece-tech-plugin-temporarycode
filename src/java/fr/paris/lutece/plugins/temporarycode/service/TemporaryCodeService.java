@@ -41,6 +41,7 @@ import fr.paris.lutece.plugins.temporarycode.business.TemporaryCode;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfig;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfigHome;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeHome;
+import fr.paris.lutece.plugins.temporarycode.utils.TemporaryCodeUtils;
 
 /**
  * 
@@ -72,15 +73,24 @@ public class TemporaryCodeService
      * @param userId
      * @return the instance created for user
      */
-    public TemporaryCode generateTemporaryCode ( int nIdConfig, String userId )
+    public TemporaryCode generateTemporaryCode ( int nIdConfig, String userId, String strActionName )
     {
         Optional<TemporaryCodeConfig> config = TemporaryCodeConfigHome.findByPrimaryKey( nIdConfig );
+        
+        //Remove if exist an temporary code with same user id and actionName
+        Optional<TemporaryCode> temporaryCodeExist = TemporaryCodeHome.findByUserIdAndActionName( userId, strActionName );
+        if( temporaryCodeExist.isPresent( ) )
+        {
+            TemporaryCodeHome.remove( temporaryCodeExist.get( ).getId( ) );
+        }
         
         if (  config.isPresent( ) )
         {
             TemporaryCode temporaryCode = new TemporaryCode( );
             temporaryCode.setUserId( userId );
+            temporaryCode.setActionName( strActionName );
             temporaryCode.setUsed( false );
+            temporaryCode.setCreatedDate( Timestamp.from( Instant.now( ) ) );
             temporaryCode.setCode( TemporaryCodeUtils.generateCode( config.get( ) ) );
             temporaryCode.setValidityDate( TemporaryCodeUtils.addMinuteToDate( config.get( ) ) );
           
@@ -94,11 +104,12 @@ public class TemporaryCodeService
      * 
      * @param strUserId
      * @param strTemporaryCode
+     * @param strActionName
      * @return true if temparorary code is valid
      */
-    public boolean isValidTemporaryCode ( String strUserId, String strTemporaryCode )
+    public boolean isValidTemporaryCode ( String strUserId, String strTemporaryCode, String strActionName )
     {
-        Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByUserIdAndCode( strUserId, strTemporaryCode );
+        Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByUserIdAndCode( strUserId, strTemporaryCode, strActionName );
         
         if( temporaryCode.isPresent( ) )
         {
@@ -113,16 +124,15 @@ public class TemporaryCodeService
      * Use temporary code
      * @param strUserId
      * @param strTemporaryCode
+     * @param strActionName
      */
-    public void useTemporaryCode ( String strUserId, String strTemporaryCode )
+    public void useTemporaryCode ( String strUserId, String strTemporaryCode, String strActionName )
     {
-        Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByUserIdAndCode( strUserId, strTemporaryCode );
+        Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByUserIdAndCode( strUserId, strTemporaryCode, strActionName );
         
         if( temporaryCode.isPresent( ) )
         {
-            temporaryCode.get( ).setUsed( true );
-            temporaryCode.get( ).setUsedDate( Timestamp.from( Instant.now( ) ) );
-            TemporaryCodeHome.update( temporaryCode.get( ) );
+            TemporaryCodeHome.remove( temporaryCode.get( ).getId( ) );
         }       
     }
 }

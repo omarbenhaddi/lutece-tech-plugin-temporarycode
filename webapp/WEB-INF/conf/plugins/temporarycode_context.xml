@@ -7,4 +7,7 @@
     <bean id="temporarycode.temporaryCodeDAO" class="fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeDAO" />
     <bean id="temporarycode.temporaryCodeConfigDAO" class="fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfigDAO" />
 
+    <!-- REST -->
+    <bean id="temporarycode.temporaryCodeRest" class="fr.paris.lutece.plugins.temporarycode.rs.TemporaryCodeRest" />
+
 </beans>

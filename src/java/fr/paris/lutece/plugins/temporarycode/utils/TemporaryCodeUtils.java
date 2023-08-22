@@ -31,15 +31,22 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.temporarycode.service;
+package fr.paris.lutece.plugins.temporarycode.utils;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fr.paris.lutece.plugins.temporarycode.business.EnumCharacterType;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfig;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.json.AbstractJsonResponse;
 
 /**
  * 
@@ -56,6 +63,9 @@ public class TemporaryCodeUtils
     {
         //Do nothing
     }
+    
+    //ObjectMapper
+    private static ObjectMapper _mapper;
     
     /**
      * Generate code
@@ -84,4 +94,43 @@ public class TemporaryCodeUtils
         return new Timestamp( c.getTime( ).getTime( ) );
     }
      
+    /**
+     * return a string containing the JSON flow
+     * @param jsonResponse the JSON Response Object
+     * @return return a string containing the JSON flow
+     */
+    public static String buildJsonResponse( AbstractJsonResponse jsonResponse )
+    {
+        String strJsonResponse = null;
+
+        if ( _mapper == null )
+        {
+            initMapper(  );
+        }
+
+        try
+        {
+            strJsonResponse = _mapper.writeValueAsString( jsonResponse );
+        }
+        catch ( JsonGenerationException e )
+        {
+            AppLogService.error( e );
+        }
+        catch ( JsonMappingException e )
+        {
+            AppLogService.error( e );
+        }
+        catch ( IOException e )
+        {
+            AppLogService.error( e );
+        }
+
+        return strJsonResponse;
+    }
+
+    private static void initMapper(  )
+    {
+        _mapper = new ObjectMapper(  );
+        //_mapper.setPropertyNamingStrategy( PropertyNamingStrategy. );
+    }
 }

@@ -80,11 +80,20 @@ public interface ITemporaryCodeDAO
      * Load the data from the table by user id and code 
      * @param strUserId the user id
      * @param strCode the code
+     * @param strActionName the action name
      * @param plugin the Plugin
      * @return The instance of the temporaryCode
      */
-    Optional<TemporaryCode> loadByUserIdAndCode( String strUserId, String strCode ,Plugin plugin );
+    Optional<TemporaryCode> loadByUserIdAndCode( String strUserId, String strCode, String strActonName, Plugin plugin );
 
+    /**
+     * Load temporary code bu user id and action name
+     * @param strUserId
+     * @param strActionName
+     * @return The instance of temporary code
+     */
+    Optional<TemporaryCode> loadByUserAndActionName ( String strUserId, String strActionName, Plugin plugin );
+    
     /**
      * Load the data of all the temporaryCode objects and returns them as a list
      * @param plugin the Plugin

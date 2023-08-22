@@ -92,6 +92,14 @@ public final class TemporaryCodeConfigHome
     {
         _dao.delete( nKey, _plugin );
     }
+    
+    /**
+     * Clear all default flag
+     */
+    public static void clearDefaultFlag ( )
+    {
+        _dao.clearDefaultFlag( _plugin );
+    }
 
     /**
      * Returns an instance of a temporaryCodeConfig whose identifier is specified in parameter
@@ -101,6 +109,15 @@ public final class TemporaryCodeConfigHome
     public static Optional<TemporaryCodeConfig> findByPrimaryKey( int nKey )
     {
         return _dao.load( nKey, _plugin );
+    }
+    
+    /**
+     * Returns an instance of a default temporaryCode config
+     * @return The instance of default temporary code config
+     */
+    public static Optional<TemporaryCodeConfig> findDefaultConfig ( )
+    {
+        return _dao.loadDefaultConfig( _plugin );
     }
 
     /**

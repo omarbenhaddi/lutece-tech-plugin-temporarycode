@@ -17,6 +17,7 @@
             <th>#i18n{temporarycode.manage_temporarycodeconfigs.columnCodeLength}</th>
             <th>#i18n{temporarycode.manage_temporarycodeconfigs.columnValidityTime}</th>
             <th>#i18n{temporarycode.manage_temporarycodeconfigs.columnCharacter}</th>
+            <th>#i18n{temporarycode.manage_temporarycodeconfigs.columnDefault}</th>
             <th>#i18n{portal.util.labelActions}</th>
         </tr>
         <@tableHeadBodySeparator />
@@ -33,6 +34,9 @@
 			</td>
             <td>
 				${temporarycodeconfig.characterType}
+			</td>
+            <td>
+				${(temporarycodeconfig.default?string('Oui','Non')!)}
 			</td>
         	<td>
 				<@aButton href='jsp/admin/plugins/temporarycode/ManageTemporaryCodeConfigs.jsp?view=modifyTemporaryCodeConfig&id=${temporarycodeconfig.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='pencil' />

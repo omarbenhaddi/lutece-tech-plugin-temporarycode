@@ -64,6 +64,12 @@ public interface ITemporaryCodeConfigDAO
      * @param plugin the Plugin
      */
     void delete( int nKey, Plugin plugin );
+    
+    /**
+     * Clear default flag
+     * @param plugin
+     */
+    void clearDefaultFlag ( Plugin plugin );
 
     ///////////////////////////////////////////////////////////////////////////
     // Finders
@@ -76,6 +82,13 @@ public interface ITemporaryCodeConfigDAO
      */
     Optional<TemporaryCodeConfig> load( int nKey, Plugin plugin );
 
+    /**
+     * Load a dafult temporary code config
+     * @param plugin
+     * @return The instance of the default temporary code config
+     */
+    Optional<TemporaryCodeConfig> loadDefaultConfig ( Plugin plugin );
+    
     /**
      * Load the data of all the temporaryCodeConfig objects and returns them as a list
      * @param plugin the Plugin

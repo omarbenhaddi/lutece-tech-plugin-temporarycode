@@ -30,15 +30,17 @@
             <feature-icon-url></feature-icon-url>
         </admin-feature>
     </admin-features>
-
-    <!-- XPages parameters -->
-    <applications>
-         <application>
-            <application-id>temporaryCodeValidator</application-id>
-            <application-class>fr.paris.lutece.plugins.temporarycode.web.TemporaryCodeValidatorXPage</application-class>
-        </application>   
-    </applications>
-
+    
+	<!-- Deamon  -->
+    <daemons>
+		<daemon>
+			<daemon-id>clearExpiredTemporaryCode</daemon-id>
+			<daemon-name>temporarycode.daemon.clearExpiredTemporaryCodeDaemon.name</daemon-name>
+			<daemon-description>temporarycode.daemon.clearExpiredTemporaryCodeDaemon.description</daemon-description>
+			<daemon-class>fr.paris.lutece.plugins.temporarycode.service.ClearExpiredTemporaryCodeDaemon</daemon-class>
+		</daemon>
+	</daemons>
+	
     <!-- Portlet parameters -->
     <portlets>
     </portlets>
@@ -104,19 +106,6 @@
         </dashboard-component>
     </dashboard-components>
     -->
-
-    <!-- Daemons -->
-    <!-- 
-    <daemons>
-        <daemon>
-            <daemon-id>...</daemon-id>
-            <daemon-name>...</daemon-name>
-            <daemon-description>...</daemon-description>
-            <daemon-class>...</daemon-class>
-        </daemon>
-    </daemons>
-    -->
-    
    
     <!-- Other services -->
     <!-- * servlets -->

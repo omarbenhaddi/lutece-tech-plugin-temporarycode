@@ -47,8 +47,8 @@ public class TemporaryCode implements Serializable
     private int _nId;
     private String _strUserId;
     private String _strCode;
+    private String _strActionName;
     private Timestamp _dateCreatedDate;
-    private Timestamp _dateUsedDate;
     private Timestamp _dateValidityDate;    
     private boolean _bUsed;
 
@@ -105,8 +105,24 @@ public class TemporaryCode implements Serializable
     public void setCode( String strCode )
     {
         _strCode = strCode;
-    }
+    }  
     
+    /**
+     * @return the _strActionName
+     */
+    public String getActionName( )
+    {
+        return _strActionName;
+    }
+
+    /**
+     * @param strActionName the _strActionName to set
+     */
+    public void setActionName( String strActionName )
+    {
+        this._strActionName = strActionName;
+    }
+
     /**
      * @return the _dateCreatedDate
      */
@@ -121,22 +137,6 @@ public class TemporaryCode implements Serializable
     public void setCreatedDate( Timestamp dateCreatedDate )
     {
         this._dateCreatedDate = dateCreatedDate;
-    }
-
-    /**
-     * @return the _dateUsedDate
-     */
-    public Timestamp getUsedDate( )
-    {
-        return _dateUsedDate;
-    }
-
-    /**
-     * @param _dateUsedDate the _dateUsedDate to set
-     */
-    public void setUsedDate( Timestamp dateUsedDate )
-    {
-        this._dateUsedDate = dateUsedDate;
     }
 
     /**

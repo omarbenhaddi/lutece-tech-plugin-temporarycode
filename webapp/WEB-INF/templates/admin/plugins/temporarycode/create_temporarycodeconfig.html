@@ -18,6 +18,9 @@
 		<@formGroup labelFor='character_type' labelKey='#i18n{temporarycode.modify_temporarycodeconfig.labelCharacter}' mandatory=true>
 			<@select name='character_type' default_value=''  items=charactertype_list />
 		</@formGroup>
+		<@formGroup>
+			<@checkBox labelKey='#i18n{temporarycode.modify_temporarycodeconfig.labelDefault}' name='default' id='default' />
+		</@formGroup>
 				
 		<@actionButtons button1Name="action_createTemporaryCodeConfig" button2Name="view_manageTemporaryCodeConfig"/>
     </@tform>
