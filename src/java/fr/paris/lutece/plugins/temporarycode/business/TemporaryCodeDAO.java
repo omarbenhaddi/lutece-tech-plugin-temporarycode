@@ -49,15 +49,15 @@ import java.util.Optional;
 public final class TemporaryCodeDAO implements ITemporaryCodeDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used FROM temporary_code_generated WHERE id_temporary_code = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO temporary_code_generated ( user_id, code, action_name, created_date, validity_date, used ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info  FROM temporary_code_generated WHERE id_temporary_code = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO temporary_code_generated ( user_id, code, action_name, created_date, validity_date, used,complementary_info ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM temporary_code_generated WHERE id_temporary_code = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE temporary_code_generated SET user_id = ?, code = ?, action_name = ?, created_date = ?, validity_date = ?, used = ? WHERE id_temporary_code = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used FROM temporary_code_generated";
+    private static final String SQL_QUERY_UPDATE = "UPDATE temporary_code_generated SET user_id = ?, code = ?, action_name = ?, created_date = ?, validity_date = ?, used = ?,complementary_info= ? WHERE id_temporary_code = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_temporary_code FROM temporary_code_generated";
-    private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used FROM temporary_code_generated WHERE id_temporary_code IN (  ";
-    private static final String SQL_QUERY_SELECT_BY_USER_AND_CODE_AND_ACTON = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used FROM temporary_code_generated WHERE user_id = ? AND code = ?  AND action_name = ?";
-    private static final String SQL_QUERY_SELECT_BY_USER_AND_ACTION_NAME = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used FROM temporary_code_generated WHERE user_id = ? AND action_name = ?";
+    private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated WHERE id_temporary_code IN (  ";
+    private static final String SQL_QUERY_SELECT_BY_USER_AND_CODE_AND_ACTON = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated WHERE user_id = ? AND code = ?  AND action_name = ?";
+    private static final String SQL_QUERY_SELECT_BY_USER_AND_ACTION_NAME = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated WHERE user_id = ? AND action_name = ?";
 
     
     /**
@@ -75,6 +75,7 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
             daoUtil.setTimestamp( nIndex++ , temporaryCode.getCreatedDate( ) );
             daoUtil.setTimestamp( nIndex++ , temporaryCode.getValidityDate( ) );
             daoUtil.setBoolean( nIndex++ , temporaryCode.getUsed( ) );
+            daoUtil.setString( nIndex++ , temporaryCode.getComplementaryInfo() );
             
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) ) 
@@ -108,7 +109,8 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
 	            temporaryCode.setActionName( daoUtil.getString( nIndex++ ) );
 			    temporaryCode.setCreatedDate( daoUtil.getTimestamp( nIndex++  ) );
 			    temporaryCode.setValidityDate( daoUtil.getTimestamp( nIndex++ ) );
-			    temporaryCode.setUsed( daoUtil.getBoolean( nIndex ) );
+			    temporaryCode.setUsed( daoUtil.getBoolean( nIndex++ ) );
+			    temporaryCode.setComplementaryInfo( daoUtil.getString( nIndex ) );
 	        }
 	
 	        return Optional.ofNullable( temporaryCode );
@@ -144,6 +146,7 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
             daoUtil.setTimestamp( nIndex++ , temporaryCode.getCreatedDate( ) );
         	daoUtil.setTimestamp( nIndex++ , temporaryCode.getValidityDate( ) );
         	daoUtil.setBoolean( nIndex++ , temporaryCode.getUsed( ) );
+        	daoUtil.setString( nIndex++ , temporaryCode.getComplementaryInfo() );
 	        daoUtil.setInt( nIndex , temporaryCode.getId( ) );
 	
 	        daoUtil.executeUpdate( );
@@ -172,7 +175,8 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
 			    temporaryCode.setActionName( daoUtil.getString( nIndex++ ) );
                 temporaryCode.setCreatedDate( daoUtil.getTimestamp( nIndex++ ) );
 			    temporaryCode.setValidityDate( daoUtil.getTimestamp( nIndex++ ) );
-			    temporaryCode.setUsed( daoUtil.getBoolean( nIndex ) );
+			    temporaryCode.setUsed( daoUtil.getBoolean( nIndex++ ) );
+			    temporaryCode.setComplementaryInfo( daoUtil.getString( nIndex ) );
 	
 	            temporaryCodeList.add( temporaryCode );
 	        }
@@ -259,7 +263,8 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
 				    temporaryCode.setActionName( daoUtil.getString( nIndex++ ) );
 				    temporaryCode.setCreatedDate( daoUtil.getTimestamp( nIndex++ ) );
 				    temporaryCode.setValidityDate( daoUtil.getTimestamp( nIndex++ ) );
-				    temporaryCode.setUsed( daoUtil.getBoolean( nIndex ) );
+				    temporaryCode.setUsed( daoUtil.getBoolean( nIndex++ ) );
+				    temporaryCode.setComplementaryInfo( daoUtil.getString( nIndex ) );
 		            
 		            temporaryCodeList.add( temporaryCode );
 		        }
@@ -295,7 +300,8 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
                 temporaryCode.setActionName( daoUtil.getString( nIndex++ ) );
                 temporaryCode.setCreatedDate( daoUtil.getTimestamp( nIndex++ ) );
                 temporaryCode.setValidityDate( daoUtil.getTimestamp( nIndex++ ) );
-                temporaryCode.setUsed( daoUtil.getBoolean( nIndex ) );
+                temporaryCode.setUsed( daoUtil.getBoolean( nIndex++ ) );
+                temporaryCode.setComplementaryInfo( daoUtil.getString( nIndex ) );
             }
     
             return Optional.ofNullable( temporaryCode );
@@ -324,7 +330,8 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
                 temporaryCode.setActionName( daoUtil.getString( nIndex++ ) );
                 temporaryCode.setCreatedDate( daoUtil.getTimestamp( nIndex++ ) );
                 temporaryCode.setValidityDate( daoUtil.getTimestamp( nIndex++ ) );
-                temporaryCode.setUsed( daoUtil.getBoolean( nIndex ) );
+                temporaryCode.setUsed( daoUtil.getBoolean( nIndex++ ) );
+                temporaryCode.setComplementaryInfo( daoUtil.getString( nIndex ) );
             }
     
             return Optional.ofNullable( temporaryCode );

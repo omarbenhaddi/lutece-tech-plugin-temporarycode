@@ -48,7 +48,7 @@ import fr.paris.lutece.plugins.temporarycode.utils.TemporaryCodeUtils;
  * TemporaryCodeService
  *
  */
-public class TemporaryCodeService
+public class TemporaryCodeService implements ITemporaryCodeService
 {
     
     private static TemporaryCodeService _temporaryCodeService;
@@ -68,12 +68,10 @@ public class TemporaryCodeService
     }
     
     /**
-     * Generate a temporary code for an user
-     * @param nIdConfig
-     * @param userId
-     * @return the instance created for user
+     * {@inheritDoc }
      */
-    public TemporaryCode generateTemporaryCode ( int nIdConfig, String userId, String strActionName )
+    @Override
+	public TemporaryCode generateTemporaryCode ( int nIdConfig, String userId, String strActionName,String strComplemtaryInfo )
     {
         Optional<TemporaryCodeConfig> config = TemporaryCodeConfigHome.findByPrimaryKey( nIdConfig );
         
@@ -93,6 +91,7 @@ public class TemporaryCodeService
             temporaryCode.setCreatedDate( Timestamp.from( Instant.now( ) ) );
             temporaryCode.setCode( TemporaryCodeUtils.generateCode( config.get( ) ) );
             temporaryCode.setValidityDate( TemporaryCodeUtils.addMinuteToDate( config.get( ) ) );
+            temporaryCode.setComplementaryInfo(strComplemtaryInfo);
           
             return TemporaryCodeHome.create( temporaryCode );
         }
@@ -100,14 +99,22 @@ public class TemporaryCodeService
         return null;
     }
     
+    
     /**
-     * 
-     * @param strUserId
-     * @param strTemporaryCode
-     * @param strActionName
-     * @return true if temparorary code is valid
+     * {@inheritDoc }
      */
-    public boolean isValidTemporaryCode ( String strUserId, String strTemporaryCode, String strActionName )
+    @Override
+	public TemporaryCode generateTemporaryCode ( int nIdConfig, String userId, String strActionName )
+    {
+       
+        return generateTemporaryCode(nIdConfig, userId, strActionName, null);
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+	public boolean isValidTemporaryCode ( String strUserId, String strTemporaryCode, String strActionName )
     {
         Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByUserIdAndCode( strUserId, strTemporaryCode, strActionName );
         
@@ -119,13 +126,28 @@ public class TemporaryCodeService
         
         return false;
     }
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+	public String getComplementaryInfo ( String strUserId, String strTemporaryCode, String strActionName )
+    {
+        Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByUserIdAndCode( strUserId, strTemporaryCode, strActionName );
+        
+        if( temporaryCode.isPresent( ) )
+        {
+            
+            return temporaryCode.get( ).getComplementaryInfo();           
+        }
+        
+        return null;
+    }
+    
     
     /**
-     * Use temporary code
-     * @param strUserId
-     * @param strTemporaryCode
-     * @param strActionName
+     * {@inheritDoc }
      */
+    @Override
     public void useTemporaryCode ( String strUserId, String strTemporaryCode, String strActionName )
     {
         Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByUserIdAndCode( strUserId, strTemporaryCode, strActionName );

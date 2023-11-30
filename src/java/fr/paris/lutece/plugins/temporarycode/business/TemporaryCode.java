@@ -48,6 +48,7 @@ public class TemporaryCode implements Serializable
     private String _strUserId;
     private String _strCode;
     private String _strActionName;
+    private String _strComplementaryInfo;
     private Timestamp _dateCreatedDate;
     private Timestamp _dateValidityDate;    
     private boolean _bUsed;
@@ -175,5 +176,21 @@ public class TemporaryCode implements Serializable
     {
         _bUsed = bUsed;
     }
+
+    /**
+     * 
+     * @return complementary information
+     */
+	public String getComplementaryInfo() {
+		return _strComplementaryInfo;
+	}
+
+	/**
+	 * 
+	 * @param _strComplementaryInfo complementary indormation
+	 */
+	public void setComplementaryInfo(String _strComplementaryInfo) {
+		this._strComplementaryInfo = _strComplementaryInfo;
+	}
     
 }
