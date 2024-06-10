@@ -125,6 +125,18 @@ public final class TemporaryCodeHome
     {
         return _dao.loadByUserAndActionName( strUserId, strActionName, _plugin );
     }
+    
+    /**
+     * Returns an instance of a temporaryCode by temporary code and action name
+     * @param strCode the code
+     * @param strActionName the action name
+     * @return an instance of TemporaryCode
+     */
+    public static Optional<TemporaryCode> findByCodeAndActionName( String strCode, String strActionName )
+    {
+        return _dao.loadByCodeAndActionName( strCode, strActionName, _plugin );
+    }
+    
 
     
     /**

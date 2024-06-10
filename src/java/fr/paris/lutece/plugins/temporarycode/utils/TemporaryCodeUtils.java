@@ -78,6 +78,11 @@ public class TemporaryCodeUtils
         boolean useLetters = EnumCharacterType.ALPHANUMERIC.name( ).equals( config.getCharacterType( ) );
         boolean useNumbers = EnumCharacterType.NUMERIC.name( ).equals( config.getCharacterType( ) );
         
+        if( useLetters )
+        {
+            useNumbers = true;
+        }
+        
         return RandomStringUtils.random( length, useLetters, useNumbers ).toLowerCase( );      
     }
     

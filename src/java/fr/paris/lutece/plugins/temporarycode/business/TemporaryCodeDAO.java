@@ -57,6 +57,7 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_temporary_code FROM temporary_code_generated";
     private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated WHERE id_temporary_code IN (  ";
     private static final String SQL_QUERY_SELECT_BY_USER_AND_CODE_AND_ACTON = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated WHERE user_id = ? AND code = ?  AND action_name = ?";
+    private static final String SQL_QUERY_SELECT_BY_CODE_AND_ACTON = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated WHERE code = ?  AND action_name = ?";
     private static final String SQL_QUERY_SELECT_BY_USER_AND_ACTION_NAME = "SELECT id_temporary_code, user_id, code, action_name, created_date, validity_date, used,complementary_info FROM temporary_code_generated WHERE user_id = ? AND action_name = ?";
 
     
@@ -285,6 +286,36 @@ public final class TemporaryCodeDAO implements ITemporaryCodeDAO
             daoUtil.setString( 1 , strUserId );
             daoUtil.setString( 2 , strCode );
             daoUtil.setString( 3 , strActionName );
+            
+            daoUtil.executeQuery( );
+            TemporaryCode temporaryCode = null;
+    
+            if ( daoUtil.next( ) )
+            {
+                temporaryCode = new TemporaryCode();
+                int nIndex = 1;
+                
+                temporaryCode.setId( daoUtil.getInt( nIndex++ ) );
+                temporaryCode.setUserId( daoUtil.getString( nIndex++ ) );
+                temporaryCode.setCode( daoUtil.getString( nIndex++ ) );
+                temporaryCode.setActionName( daoUtil.getString( nIndex++ ) );
+                temporaryCode.setCreatedDate( daoUtil.getTimestamp( nIndex++ ) );
+                temporaryCode.setValidityDate( daoUtil.getTimestamp( nIndex++ ) );
+                temporaryCode.setUsed( daoUtil.getBoolean( nIndex++ ) );
+                temporaryCode.setComplementaryInfo( daoUtil.getString( nIndex ) );
+            }
+    
+            return Optional.ofNullable( temporaryCode );
+        }
+    }
+    
+    @Override
+    public Optional<TemporaryCode> loadByCodeAndActionName( String strCode, String strActionName, Plugin plugin )
+    {
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CODE_AND_ACTON, plugin ) )
+        {
+            daoUtil.setString( 1 , strCode );
+            daoUtil.setString( 2 , strActionName );
             
             daoUtil.executeQuery( );
             TemporaryCode temporaryCode = null;

@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.temporarycode.service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCode;
@@ -42,6 +43,7 @@ import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfig;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfigHome;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeHome;
 import fr.paris.lutece.plugins.temporarycode.utils.TemporaryCodeUtils;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
  * 
@@ -93,7 +95,17 @@ public class TemporaryCodeService implements ITemporaryCodeService
             temporaryCode.setValidityDate( TemporaryCodeUtils.addMinuteToDate( config.get( ) ) );
             temporaryCode.setComplementaryInfo(strComplemtaryInfo);
           
-            return TemporaryCodeHome.create( temporaryCode );
+            TemporaryCodeHome.create( temporaryCode );
+            
+            //Listener after remove temporaryCode
+            List<ICreateTemporaryCodeListener> listListener = SpringContextService.getBeansOfType( ICreateTemporaryCodeListener.class );
+            
+            if( listListener != null )
+            {
+                listListener.forEach( l -> l.onCreate( temporaryCode ) );
+            }
+            
+            return temporaryCode;
         }
         
         return null;
@@ -155,6 +167,30 @@ public class TemporaryCodeService implements ITemporaryCodeService
         if( temporaryCode.isPresent( ) )
         {
             TemporaryCodeHome.remove( temporaryCode.get( ).getId( ) );
+            
+            //Listener after remove temporaryCode
+            List<IRemoveTemporaryCodeListener> listListener = SpringContextService.getBeansOfType( IRemoveTemporaryCodeListener.class );
+            
+            if( listListener != null )
+            {
+                listListener.forEach( l -> l.onRemove( temporaryCode.get( ), false ) );
+            }
         }       
     }
+
+    @Override
+    public TemporaryCode getTemporaryCode( String strTemporaryCode, String strActionName )
+    {
+        Optional<TemporaryCode> temporaryCode = TemporaryCodeHome.findByCodeAndActionName(strTemporaryCode, strActionName );
+        
+        if( temporaryCode.isPresent( ) )
+        {
+            
+            return temporaryCode.get( );           
+        }
+        
+        return null;
+    }
+    
+    
 }

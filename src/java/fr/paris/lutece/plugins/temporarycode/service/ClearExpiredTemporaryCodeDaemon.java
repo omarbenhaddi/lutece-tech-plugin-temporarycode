@@ -40,6 +40,7 @@ import java.util.List;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCode;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeHome;
 import fr.paris.lutece.portal.service.daemon.Daemon;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
  * 
@@ -62,6 +63,14 @@ public class ClearExpiredTemporaryCodeDaemon extends Daemon
             if( ts.after( temporaryCode.getValidityDate( ) ) )
             {
                 TemporaryCodeHome.remove( temporaryCode.getId( ) );
+                
+                //Listener after remove temporaryCode
+                List<IRemoveTemporaryCodeListener> listListener = SpringContextService.getBeansOfType( IRemoveTemporaryCodeListener.class );
+                
+                if( listListener != null )
+                {
+                    listListener.forEach( l -> l.onRemove( temporaryCode, true ) );
+                }
             }
         }
     }

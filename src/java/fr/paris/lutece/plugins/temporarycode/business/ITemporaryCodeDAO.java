@@ -93,6 +93,14 @@ public interface ITemporaryCodeDAO
      * @return The instance of temporary code
      */
     Optional<TemporaryCode> loadByUserAndActionName ( String strUserId, String strActionName, Plugin plugin );
+ 
+    /**
+     * Load temporary code by code and action name
+     * @param strCode
+     * @param strActionName
+     * @return The instance of temporary code
+     */
+    Optional<TemporaryCode> loadByCodeAndActionName ( String strCode, String strActionName, Plugin plugin );
     
     /**
      * Load the data of all the temporaryCode objects and returns them as a list
