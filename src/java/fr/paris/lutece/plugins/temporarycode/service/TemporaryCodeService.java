@@ -38,6 +38,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCode;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfig;
 import fr.paris.lutece.plugins.temporarycode.business.TemporaryCodeConfigHome;
@@ -78,10 +80,13 @@ public class TemporaryCodeService implements ITemporaryCodeService
         Optional<TemporaryCodeConfig> config = TemporaryCodeConfigHome.findByPrimaryKey( nIdConfig );
         
         //Remove if exist an temporary code with same user id and actionName
-        Optional<TemporaryCode> temporaryCodeExist = TemporaryCodeHome.findByUserIdAndActionName( userId, strActionName );
-        if( temporaryCodeExist.isPresent( ) )
+        if( StringUtils.isNotEmpty( userId ))
         {
-            TemporaryCodeHome.remove( temporaryCodeExist.get( ).getId( ) );
+            Optional<TemporaryCode> temporaryCodeExist = TemporaryCodeHome.findByUserIdAndActionName( userId, strActionName );
+            if( temporaryCodeExist.isPresent( ) )
+            {
+                TemporaryCodeHome.remove( temporaryCodeExist.get( ).getId( ) );
+            }
         }
         
         if (  config.isPresent( ) )
